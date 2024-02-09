@@ -170,12 +170,30 @@ class individualScraper(object):
             preco = json_data['offers']['price']
 
         return nome, descricao, sku, preco
+    
+    async def extract_html (self, soup):
+        marca = None
+        th_tags = soup.find_all('th')
+        for th in th_tags:
+            if th.text.strip() == 'Marca':
+                td_tag = th.find_next('td')
+                if td_tag:
+                    div_tag = td_tag.find('div')
+                    if div_tag:
+                        marca = div_tag.text.strip()
+        return marca
 
             
             
 # Url das páginas iniciais (? total):
-n_páginas = 30
-urls = ["https://www.araujo.com.br/medicamentos?start=" + str((p-1)*50) + "&sz=50&page=" + str(p) for p in range(1, n_páginas + 1)]
+setores = ['medicamentos','infantil','dermocosmeticos','saude','beleza','higiene-pessoal','pet-shop','nutricao-saudavel','mercado','maquiagem','cabelo']
+paginas = [152,51,27,58,40,44,19,23,78,13,48]
+
+urls = []
+for departamento, n_páginas in zip(setores, paginas):
+    base_url = "https://www.araujo.com.br/" + str(setores) + "?start="
+    urls_temp = [base_url + str((p-1)*50) + "&sz=50&page=" + str(p) for p in range(1, n_páginas + 1)]
+    urls.extend(urls_temp)
 
 # Criação do primeiro scrapper:
 mainScraper = mainScraper(urls)
@@ -188,7 +206,8 @@ print("Passou pelo Main Scrapper!!!")
 individualScraper = individualScraper(mainScraper.urls_list)
 
 df = pd.DataFrame.from_dict(individualScraper.master_dict, orient='index')
+df['Farmácia'] = 'Drogaria Araujo'
 
-df.to_csv('C:/Users/berna/OneDrive/Documents/[PJ]IQVIA/drogaria_araujo/drogaria_araujo_teste.csv', index=False)
+df.to_csv('drogaria_araujo_teste.csv', index=False)
 
 print('Passou pelo Individual Scrapper!!!')
