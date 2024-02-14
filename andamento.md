@@ -3,8 +3,9 @@
 2. Drogasil: COMPLETA
 3. Nissei: insistindo no assíncrono com biblioteca aiometer, ainda não consegui preço, preço com desconto.
 4. farmacia permanente: COMPLETA, sem descrição
-5. Rosário:
-6. Farmácia Independente:
+5. Rosário: Completa, sem descrição
+6. Farmácia Independente: COMPLETA, sem descrição
+7. Oncolog Medicamentos: tentar todo por playwright (poucos produtos)
 
 ### Outras Farmácias:
 agile: não achei api nem json no html
