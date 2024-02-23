@@ -6,13 +6,6 @@ from bs4 import BeautifulSoup
 import asyncio
 import aiohttp
 
-'''
-O Scrapping será realizado em 2 partes:
-O Scrapping será realizado por objetos da classe Scrapper em 2 etapas:
-1. mainScrapper: objeto responsável por iterar nas URLS das páginas de medicamento da Drogasil, selecionando o URLS de todos os produtos.
-2. individualScrapper: objeto responsável por iterar nas URLS selecionadas pelo mainScrapper. Realizará a seleção de informações relevantes.
-'''
-
 class mainScraper(object):
 
     '''
@@ -188,6 +181,9 @@ class individualScraper(object):
 # Url das páginas iniciais (? total):
 setores = ['medicamentos','infantil','dermocosmeticos','saude','beleza','higiene-pessoal','pet-shop','nutricao-saudavel','mercado','maquiagem','cabelo']
 paginas = [152,51,27,58,40,44,19,23,78,13,48]
+
+setores = ['medicamentos']
+paginas = [1]
 
 urls = []
 for departamento, n_páginas in zip(setores, paginas):

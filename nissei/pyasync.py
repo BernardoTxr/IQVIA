@@ -51,6 +51,9 @@ def extract_url(setor,p):
 setores = ['medicamentos','saude','beleza','dermocosmeticos','higiene-pessoal','infantil','mercearia']
 paginas = [145,19,66,16,35,23,167]
 
+setores = ['medicamentos','saude','beleza','dermocosmeticos','higiene-pessoal','infantil','mercearia']
+paginas = [2,2]
+
 urls_list = []
 
 for setor,n_pagina in zip(setores,paginas):
@@ -76,13 +79,11 @@ async def scrape(url):
         sku = None
         preco = None
 
+        # Resultados do json:
         scripts = soup.find_all('script', {'type': 'application/ld+json'})
-
         script = scripts[1].string
         script_del = re.sub(r'"description": ".*?",', '', script, flags=re.DOTALL)
-
         json_data = json.loads(script_del)
-
         farmacia = 'Farmácias Nissei'
         cidade = 'São Paulo'
         nome = json_data['name']

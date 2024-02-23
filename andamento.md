@@ -1,11 +1,9 @@
 ### Andamento do Projeto:
 1. Drogaria Araujo: dificuldade em extrair preço, terminar de extrair marca, problema com request
+    recomeçar tudo com async.
 2. Drogasil: COMPLETA
-3. Nissei: insistindo no assíncrono com biblioteca aiometer, ainda não consegui preço, preço com desconto.
-4. farmacia permanente: COMPLETA, sem descrição
-5. Rosário: Completa, sem descrição
-6. Farmácia Independente: COMPLETA, sem descrição
-7. Oncolog Medicamentos: tentar todo por playwright (poucos produtos)
+3. Nissei: tomando request blocked
+7. Oncolog Medicamentos: COMPLETA - atualizar documentação
 
 ### Outras Farmácias:
 agile: não achei api nem json no html
@@ -53,7 +51,7 @@ farma agora
 ### PADRÃO PESQUISAR - PREÇO: (ps: todos sem descrição e EAN)
 Farmácia Permanente 
 Farmácias independente
-rosário
+farmácias rosário
     
 
 Tempo nissei:
