@@ -1,8 +1,10 @@
 ### Andamento do Projeto:
 1. Drogaria Araujo: dando certo, ver o limite de requisições
 2. Drogasil: COMPLETA
-3. Nissei: perdi tudo fodase
-7. Oncolog Medicamentos: COMPLETA - atualizar documentação
+4. Oncolog Medicamentos: COMPLETA - atualizar documentação
+5. beleza na web: bloqueado por ip mas tudo feito
+6. amo beleza: não começado
+7. epoca cosmeticos: COMPLETA - atualizar documentação
 
 ### Outras Farmácias:
 agile: não achei api nem json no html

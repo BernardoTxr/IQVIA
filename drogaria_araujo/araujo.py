@@ -40,7 +40,7 @@ from functools import partial
 import time
 from bs4 import BeautifulSoup
 
-async def get_response(urls, tries = 10):
+async def get_response(urls, tries = 3):
     responses = []
     async with httpx.AsyncClient() as client:
         sem = asyncio.Semaphore(5)
