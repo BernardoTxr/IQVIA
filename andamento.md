@@ -1,8 +1,7 @@
 ### Andamento do Projeto:
-1. Drogaria Araujo: dificuldade em extrair preço, terminar de extrair marca, problema com request
-    recomeçar tudo com async.
+1. Drogaria Araujo: dando certo, ver o limite de requisições
 2. Drogasil: COMPLETA
-3. Nissei: tomando request blocked
+3. Nissei: perdi tudo fodase
 7. Oncolog Medicamentos: COMPLETA - atualizar documentação
 
 ### Outras Farmácias:

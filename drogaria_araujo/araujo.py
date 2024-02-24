@@ -43,7 +43,7 @@ from bs4 import BeautifulSoup
 async def get_response(urls, tries = 10):
     responses = []
     async with httpx.AsyncClient() as client:
-        sem = asyncio.Semaphore(3)
+        sem = asyncio.Semaphore(5)
         async def requisition(url):
             async with sem:
                 for i in range(tries):
@@ -77,9 +77,6 @@ async def main():
     setores = ['medicamentos','infantil','dermocosmeticos','saude','beleza','higiene-pessoal','pet-shop','nutricao-saudavel','mercado','maquiagem','cabelo']
     paginas = [152,51,27,58,40,44,19,23,78,13,48]
 
-    setores = ['medicamentos']
-    paginas = [1]
-
     # 1. formando urls das páginas iniciais
     urls = []
     for setores, n_páginas in zip(setores, paginas):
@@ -96,13 +93,12 @@ async def main():
         urls_temp = await extract_link(response)
         urls_individuais.extend(urls_temp)
 
-    print(urls_individuais)
-
     obter_link = time.time()
 
     # 4. solicitando urls das páginas individuais
     responses = await get_response(urls_individuais)
 
+    final_df = pd.DataFrame()
     # 5. extraindo informações das urls das páginas individuais
     i=1
     for response in responses:
@@ -111,7 +107,7 @@ async def main():
         print("Extraindo informações",i,"de",len(responses))
         i+=1
 
-    final_df.to_csv('oncolog/oncolog_oficial.csv', index=False)
+    final_df.to_csv('drogaria_araujo/araujo_oficial.csv', index=False)
 
     final = time.time()
 
@@ -144,31 +140,31 @@ async def extract_link(text):
 async def extract_info(response):
     soup = BeautifulSoup(response, 'lxml')
 
-    farmacia = 'Oncolog Medicamentos'
+    farmacia = 'Drogaria Araujo'
     cidade = 'São Paulo'
-    nome = soup.find('h1', class_='nomeProduto').text if soup.find('h1', class_='nomeProduto') else None
-    sku = soup.find('h6', class_='codProduto').text if soup.find('h6', class_='codProduto') else None
-    sku = sku.replace('SKU: ', '') if sku else None
-    preco_com_desconto = soup.find('span', id='preco').text if soup.find('span', id='preco') else None
-    preco_sem_desconto = soup.find('span', id='preco-antigo').text if soup.find('span', id='preco-antigo') else None
-    descricao = soup.find('div', class_='ui grid one column').text if soup.find('div', class_='column') else None
-    descricao = re.sub(r'\n', '', descricao) if descricao else None
-    # Cálculo do percentual de desconto:
-    if preco_com_desconto and preco_sem_desconto:
-        preco_com_desconto_str = preco_com_desconto.replace('R$', '').replace('.', '').replace(',', '.').strip()
-        preco_sem_desconto_str = preco_sem_desconto.replace('R$', '').replace('.', '').replace(',', '.').strip()
-        
-        # Certifique-se de tratar casos em que a string fica vazia após a remoção dos caracteres
-        preco_com_desconto = float(preco_com_desconto_str) if preco_com_desconto_str else None
-        preco_sem_desconto = float(preco_sem_desconto_str) if preco_sem_desconto_str else None
-        
-        # Cálculo do desconto apenas se ambos os preços forem válidos
-        if preco_com_desconto and preco_sem_desconto:
-            desconto = 100 - (preco_com_desconto / preco_sem_desconto * 100)
-        else:
-            desconto = None
+    nome = soup.find('h1').text if soup.find('h1') else 'Sem nome disponível.'
+    preco_com_desconto = soup.find('span', class_='productPrice__price').text if soup.find('span', class_='productPrice__price') else None
+    preco_sem_desconto = soup.find('del', class_='productPrice__lineThrough').text if soup.find('del', class_='productPrice__lineThrough') else None
+    descricao = soup.find('div', class_='js-pdInfo__dynamic').text if soup.find('div', class_='js-pdInfo__dynamic') else 'Sem descrição disponível.'
+
+    # Transforma precos de RS 1.750,00 em float:
+    preco_com_desconto = float(preco_com_desconto.replace('R$', '').replace('.', '').replace(',', '.')) if preco_com_desconto else None
+    preco_sem_desconto = float(preco_sem_desconto.replace('R$', '').replace('.', '').replace(',', '.')) if preco_sem_desconto else None
+
+    # Cálculo do desconto:
+    if preco_sem_desconto and preco_com_desconto:
+        desconto = (preco_sem_desconto - preco_com_desconto) / preco_sem_desconto
     else:
         desconto = None
+
+    # Encontre o script que contém as informações do produto
+    script = soup.find('script', type='application/ld+json')
+    script = json.loads(script.string)
+    sku = script['sku']
+    ean = script['gtin13']
+    marca = script['brand']['name']
+
+    descricao = descricao.replace('\n', '')
 
     nova_linha = {
         'farmacia': farmacia,
@@ -178,7 +174,9 @@ async def extract_info(response):
         'preco_com_desconto': preco_com_desconto,
         'preco_sem_desconto': preco_sem_desconto,
         'desconto': desconto,
-        'descricao': descricao
+        'marca': marca,
+        'ean': ean,
+        'descricao': descricao,
     }
     df = pd.DataFrame(nova_linha, index=[0])
     return df
