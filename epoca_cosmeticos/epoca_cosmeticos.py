@@ -74,15 +74,8 @@ async def main():
 
     inicio = time.time()
 
-    setores = ['medicamentos','infantil','dermocosmeticos','saude','beleza','higiene-pessoal','pet-shop','nutricao-saudavel','mercado','maquiagem','cabelo']
-    paginas = [152,51,27,58,40,44,19,23,78,13,48]
-
-    # 1. formando urls das páginas iniciais
-    urls = []
-    for setores, n_páginas in zip(setores, paginas):
-        base_url = "https://www.araujo.com.br/" + str(setores) + "?start="
-        urls_temp = [base_url + str((p-1)*50) + "&sz=50&page=" + str(p) for p in range(1, n_páginas + 1)]
-        urls.extend(urls_temp)
+    # 1. formando urls dos xmls
+    urls = ['https://www.epocacosmeticos.com.br/sitemap/product-'+str(p)+'.xml' for p in range(1,15)]
 
     # 2. retornando responses das páginas iniciais
     responses = await get_response(urls)
@@ -107,7 +100,7 @@ async def main():
         print("Extraindo informações",i,"de",len(responses))
         i+=1
 
-    final_df.to_csv('drogaria_araujo/araujo_oficial.csv', index=False)
+    final_df.to_csv('epoca_cosmeticos/epoca_cosmeticos_oficial.csv', index=False)
 
     final = time.time()
 
@@ -123,29 +116,25 @@ async def main():
     print("---------------------")
 
 async def extract_link(text):
-        soup = BeautifulSoup(text, 'html.parser')
-        scripts = soup.find_all('script')
-        for script in scripts:
-            if script.get('type') == 'application/ld+json' and script.string:
-                script_content = script.string.strip()
-                if script_content.startswith('{"@context":"http://schema.org/","@type":"ItemList","itemListElement"'):
-                    # Analisa o JSON encontrado
-                    try:
-                        data = json.loads(script_content)
-                        urls = [item['url'] for item in data.get('itemListElement', [])]
-                        return urls
-                    except json.JSONDecodeError as e:
-                        return None
+    urls = []
+    soup = BeautifulSoup(text, 'xml')
+    locs = soup.find_all('loc')
+    for loc in locs:
+        urls.append(loc.text)
+
+    return urls
 
 async def extract_info(response):
     soup = BeautifulSoup(response, 'lxml')
 
-    farmacia = 'Drogaria Araujo'
+    farmacia = 'Época Cosméticos'
     cidade = 'São Paulo'
     nome = soup.find('h1').text if soup.find('h1') else 'Sem nome disponível.'
-    preco_com_desconto = soup.find('span', class_='productPrice__price').text if soup.find('span', class_='productPrice__price') else None
-    preco_sem_desconto = soup.find('del', class_='productPrice__lineThrough').text if soup.find('del', class_='productPrice__lineThrough') else None
-    descricao = soup.find('div', class_='js-pdInfo__dynamic').text if soup.find('div', class_='js-pdInfo__dynamic') else 'Sem descrição disponível.'
+    preco_com_desconto = soup.find('strong', class_='skuBestPrice').text if soup.find('strong', class_='skuBestPrice') else None
+    preco_sem_desconto = soup.find('strong', class_='skuListPrice').text if soup.find('strong', class_='skuListPrice') else None
+    descricao = soup.find('div', class_='productDescription').text if soup.find('div', class_='productDescription') else 'Sem descrição disponível.'
+    ean = soup.find('label',class_='sku-ean-code').text if soup.find('label',class_='sku-ean-code') else None
+    marca = soup.find('div', class_='product__floating-info--brand').text if soup.find('div', class_='product__floating-info--brand') else None
 
     # Transforma precos de RS 1.750,00 em float:
     preco_com_desconto = float(preco_com_desconto.replace('R$', '').replace('.', '').replace(',', '.')) if preco_com_desconto else None
@@ -157,20 +146,12 @@ async def extract_info(response):
     else:
         desconto = None
 
-    # Encontre o script que contém as informações do produto
-    script = soup.find('script', type='application/ld+json')
-    script = json.loads(script.string)
-    sku = script['sku']
-    ean = script['gtin13']
-    marca = script['brand']['name']
-
     descricao = descricao.replace('\n', '')
 
     nova_linha = {
         'farmacia': farmacia,
         'cidade': cidade,
         'nome': nome,
-        'sku': sku,
         'preco_com_desconto': preco_com_desconto,
         'preco_sem_desconto': preco_sem_desconto,
         'desconto': desconto,
