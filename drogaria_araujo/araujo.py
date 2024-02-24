@@ -74,15 +74,8 @@ async def main():
 
     inicio = time.time()
 
-    setores = ['medicamentos','infantil','dermocosmeticos','saude','beleza','higiene-pessoal','pet-shop','nutricao-saudavel','mercado','maquiagem','cabelo']
-    paginas = [152,51,27,58,40,44,19,23,78,13,48]
-
-    # 1. formando urls das páginas iniciais
-    urls = []
-    for setores, n_páginas in zip(setores, paginas):
-        base_url = "https://www.araujo.com.br/" + str(setores) + "?start="
-        urls_temp = [base_url + str((p-1)*50) + "&sz=50&page=" + str(p) for p in range(1, n_páginas + 1)]
-        urls.extend(urls_temp)
+    # 1. formando urls dos xmls
+    urls = ['https://www.araujo.com.br/sitemap_'+str(p)+'-product.xml' for p in [1,2,3,4]]
 
     # 2. retornando responses das páginas iniciais
     responses = await get_response(urls)
@@ -123,19 +116,13 @@ async def main():
     print("---------------------")
 
 async def extract_link(text):
-        soup = BeautifulSoup(text, 'html.parser')
-        scripts = soup.find_all('script')
-        for script in scripts:
-            if script.get('type') == 'application/ld+json' and script.string:
-                script_content = script.string.strip()
-                if script_content.startswith('{"@context":"http://schema.org/","@type":"ItemList","itemListElement"'):
-                    # Analisa o JSON encontrado
-                    try:
-                        data = json.loads(script_content)
-                        urls = [item['url'] for item in data.get('itemListElement', [])]
-                        return urls
-                    except json.JSONDecodeError as e:
-                        return None
+    urls = []
+    soup = BeautifulSoup(text, 'xml')
+    locs = soup.find_all('loc')
+    for loc in locs:
+        urls.append(loc.text)
+
+    return urls
 
 async def extract_info(response):
     soup = BeautifulSoup(response, 'lxml')
