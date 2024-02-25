@@ -1,9 +1,9 @@
 ### Andamento do Projeto:
-1. Drogaria Araujo: dando certo, ver o limite de requisições
+1. Drogaria Araujo: COMPLETA - atualizar documentação
 2. Drogasil: COMPLETA
 4. Oncolog Medicamentos: COMPLETA - atualizar documentação
 5. beleza na web: bloqueado por ip mas tudo feito
-6. amo beleza: não começado
+6. amo beleza: dificuldade nos extract html, nem nome tá vindo em alguns
 7. epoca cosmeticos: COMPLETA - atualizar documentação
 
 ### Outras Farmácias:

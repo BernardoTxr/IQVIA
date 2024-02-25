@@ -133,7 +133,7 @@ async def extract_link(text):
 async def extract_info(response):
     soup = BeautifulSoup(response, 'lxml')
 
-    farmacia = 'Época Cosméticos'
+    farmacia = 'Beleza na Web'
     cidade = 'São Paulo'
     nome = soup.find('h1').text if soup.find('h1') else 'Sem nome disponível.'
     preco_com_desconto = soup.find('div', class_='nproduct-price-value nproduct-price-value-redesign').text if soup.find('div', class_='nproduct-price-value nproduct-price-value-redesign') else None
