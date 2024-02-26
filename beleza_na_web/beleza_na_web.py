@@ -48,8 +48,8 @@ async def get_response(urls, tries = 3):
   'sec-ch-ua': '"Not A(Brand";v="99", "Google Chrome";v="121", "Chromium";v="121"',
   'sec-ch-ua-mobile': '?0',
   'sec-ch-ua-platform': '"Linux"'
-}) as client:
-        sem = asyncio.Semaphore(5)
+},timeout=30) as client:
+        sem = asyncio.Semaphore(3)
         async def requisition(url):
             async with sem:
                 for i in range(tries):

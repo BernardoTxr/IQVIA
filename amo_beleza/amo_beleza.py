@@ -42,7 +42,7 @@ from bs4 import BeautifulSoup
 
 async def get_response(urls, tries = 3):
     responses = []
-    async with httpx.AsyncClient(headers = {
+    headers = {
   'authority': 'www.amobeleza.com.br',
   'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
   'accept-language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
@@ -60,7 +60,8 @@ async def get_response(urls, tries = 3):
   'service-worker-navigation-preload': 'true',
   'upgrade-insecure-requests': '1',
   'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
-}) as client:
+}
+    async with httpx.AsyncClient(headers=headers) as client:
         sem = asyncio.Semaphore(5)
         async def requisition(url):
             async with sem:
@@ -105,9 +106,6 @@ async def main():
         urls_individuais.extend(urls_temp)
 
     print("Urls individuais únicas:",len(urls_individuais))
-    urls_individuais = urls_individuais[:10]
-    print("Urls individuais limitadas:",len(urls_individuais))
-    print(urls_individuais)
 
     obter_link = time.time()
 
@@ -152,15 +150,19 @@ async def extract_info(response):
 
     farmacia = 'Amo Beleza'
     cidade = 'São Paulo'
-    nome = soup.find('h1',class_='vtex-store-components-3-x-productNameContainer vtex-store-components-3-x-productNameContainer--quickview ').text if soup.find('h1',class_='vtex-store-components-3-x-productNameContainer vtex-store-components-3-x-productNameContainer--quickview ') else 'Sem nome disponível.'
-    # Exporte o response pra um txt se não houver nome
-    with open('response.txt', 'w') as f:
-        f.write(response)
-    preco_com_desconto = soup.find('span', class_='vtex-product-price-1-x-currencyInteger').text if soup.find('span', class_='vtex-product-price-1-x-currencyInteger') else None
-    preco_sem_desconto = soup.find('span',class_='class="vtex-product-price-1-x-currencyContainer"').text if soup.find('span',class_='class="vtex-product-price-1-x-currencyContainer"') else None
-    descricao = soup.find('div', class_='vtex-store-components-3-x-content h-auto').text if soup.find('div', class_='vtex-store-components-3-x-content h-auto') else 'Sem descrição disponível.'
-    ean = soup.find('div',class_='product-sku').text if soup.find('div',class_='product-sku') else None
-    marca = soup.find('span',class_='vtex-store-components-3-x-productBrandName').text if soup.find('span',class_='vtex-store-components-3-x-productBrandName') else 'Sem marca disponível.'
+    nome = soup.find('h1',class_='vtex-store-components-3-x-productNameContainer vtex-store-components-3-x-productNameContainer--quickview mv0 t-heading-4').text if soup.find('h1',class_='vtex-store-components-3-x-productNameContainer vtex-store-components-3-x-productNameContainer--quickview mv0 t-heading-4') else None
+    if not nome: return pd.DataFrame()
+    span_com_desconto = soup.find('span',class_='vtex-product-price-1-x-sellingPriceValue')
+    preco_com_desconto_inteiro = span_com_desconto.find('span', class_='vtex-product-price-1-x-currencyInteger').text if span_com_desconto else None
+    preco_com_desconto_decimal = span_com_desconto.find('span',class_='vtex-product-price-1-x-currencyFraction').text if span_com_desconto else None
+    preco_com_desconto = preco_com_desconto_inteiro + ',' + preco_com_desconto_decimal if preco_com_desconto_inteiro and preco_com_desconto_decimal else None
+    span_sem_desconto = soup.find('span',class_='vtex-product-price-1-x-listPriceValue strike')
+    preco_sem_desconto_inteiro = span_sem_desconto.find('span',class_='vtex-product-price-1-x-currencyInteger').text if span_sem_desconto else None
+    preco_sem_desconto_decimal = span_sem_desconto.find('span',class_='vtex-product-price-1-x-currencyFraction').text if span_sem_desconto else None
+    preco_sem_desconto = preco_sem_desconto_inteiro + ',' + preco_sem_desconto_decimal if preco_sem_desconto_inteiro and preco_sem_desconto_decimal else None
+    descricao = soup.find('div', class_='vtex-store-components-3-x-content h-auto').text if soup.find('div', class_='vtex-store-components-3-x-content h-auto') else None
+    ean = soup.find('span',class_='vtex-product-identifier-0-x-product-identifier__value').text if soup.find('span',class_='vtex-product-identifier-0-x-product-identifier__value') else None
+    marca = soup.find('span',class_='vtex-store-components-3-x-productBrandName').text if soup.find('span',class_='vtex-store-components-3-x-productBrandName') else None
 
     # Transforma precos de RS 1.750,00 em float:
     preco_com_desconto = float(preco_com_desconto.replace('R$', '').replace('.', '').replace(',', '.')) if preco_com_desconto else None
@@ -173,9 +175,10 @@ async def extract_info(response):
         desconto = None
 
     # Tirar espaços e quebras de linha:
-    #nome = nome.replace('\n', '')
-    #nome = ' '.join(nome.split())
+    nome = nome.replace('\n', '')
+    nome = ' '.join(nome.split())
     descricao = descricao.replace('\n', '')
+    descricao = ' '.join(descricao.split())
 
     nova_linha = {
         'farmacia': farmacia,

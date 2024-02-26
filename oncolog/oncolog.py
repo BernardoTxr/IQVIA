@@ -33,10 +33,7 @@ import pandas as pd
 import re
 from bs4 import BeautifulSoup
 import asyncio
-import aiohttp
 import httpx
-import aiometer
-from functools import partial
 import time
 from bs4 import BeautifulSoup
 
@@ -85,6 +82,8 @@ async def main():
             for i in range(1, pagina + 1):
                 url = f'https://www.oncologmedicamentos.com.br/product/getproductscategory/?path=%2Fcategoria%2F{setor}&viewList=g&pageNumber={i}&pageSize=12&order=&brand=&category=112890'
                 urls.append(url)
+
+    # Requisitando as páginas iniciais:
     responses = await get_response(urls)
 
     final_df = pd.DataFrame()
@@ -100,8 +99,10 @@ async def main():
 
     obter_link = time.time()
 
+    # Requisitando as páginas individuais:
     responses = await get_response(links_totais)
 
+    # Extraindo informações relevantes:
     i=1
     for response in responses:
         df_temp = await extract_info(response)
@@ -150,6 +151,7 @@ async def extract_info(response):
     preco_sem_desconto = soup.find('span', id='preco-antigo').text if soup.find('span', id='preco-antigo') else None
     descricao = soup.find('div', class_='ui grid one column').text if soup.find('div', class_='column') else None
     descricao = re.sub(r'\n', '', descricao) if descricao else None
+
     # Cálculo do percentual de desconto:
     if preco_com_desconto and preco_sem_desconto:
         preco_com_desconto_str = preco_com_desconto.replace('R$', '').replace('.', '').replace(',', '.').strip()
