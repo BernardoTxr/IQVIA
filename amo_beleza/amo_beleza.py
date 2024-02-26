@@ -62,7 +62,7 @@ async def get_response(urls, tries = 3):
   'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
 }
     async with httpx.AsyncClient(headers=headers) as client:
-        sem = asyncio.Semaphore(5)
+        sem = asyncio.Semaphore(1)
         async def requisition(url):
             async with sem:
                 for i in range(tries):
