@@ -105,9 +105,16 @@ def get_apis(sku_list):
         print(response.status_code)
     return apis
 
-# Nome e quantidade de página dos departamentos:
-departamentos = ['saude', 'medicamentos','vitaminas-e-suplementos','beleza','cosmeticos','cuidados-diarios','drogasil-marcas-exclusivas']
-paginas = [15,179,71,168,36,59,89,11]
+def obter_paginas_departamentos(departamentos):
+    paginas = []
+    for departamento in departamentos:
+        url = "https://www.drogasil.com.br/" + str(departamento) + ".html?p=1"
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        paginacao = soup.find_all('a', class_='Paginationstyles__Link-sc-1am2zyy-3 gsXCf')[-1].text
+        print(paginacao)
+        paginas.append(int(paginacao))
+    return paginas
 
 async def main():
     print("------------------------")
@@ -117,6 +124,10 @@ async def main():
     print("------------------------")
     print("------------------------")
     print("------------------------")
+
+    # Nome e quantidade de página dos departamentos:
+    departamentos = ['saude', 'medicamentos','vitaminas-e-suplementos','beleza','cosmeticos','cuidados-diarios','drogasil-marcas-exclusivas']
+    paginas = obter_paginas_departamentos(departamentos)
 
     urls = []
     # Iterando por departamentos e formando URLS:

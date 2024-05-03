@@ -1,30 +1,13 @@
 '''
--------------------------------------------------
-SCRIPT PYTHON PARA EXTRAÇÃO DE DADOS DA DROGASIL.
--------------------------------------------------
+---------------------------------------------------------
+SCRIPT PYTHON PARA EXTRAÇÃO DE DADOS DA EPOCA COSMETICOS.
+---------------------------------------------------------
 
 Autor: bernardo.teixeira@polijunior.com.br
 Data de Criação: 09/02/2024
 
 Input: Não há input. O script é feito para ser rodado diretamente.
-Output: Um arquivo .csv com os dados extraídos, salvo em 'drogasil_oficial.csv'. 
-
-Metodologia utilizada: No site, existiam algumas informações que poderiam ser
-extraídas pela API e outras que permitiam a extração por HTML. Por isso, o script
-foi dividido em duas partes: uma para a extração por HTML e outra para a extração
-por API. A extração por HTML foi feita de forma assíncrona, para otimizar o tempo
-de execução. A extração por API foi feita de forma síncrona, pois a API não permitia
-a extração de forma assíncrona. No fim, as informações extraídas por HTML e API
-são unidas em um único dataframe.
-
-Url do html: https://www.drogasil.com.br/saude.html?p=1 onde 'saude' é um dos departamentos
-da drogasil. A partir dessa url, é possível acessar todas as páginas de produtos de um departamento.
-
-Url da api: https://www.drogasil.com.br/api/next/middlewareGraphql
-
-Payload da api: o payload é utilizado para obter as informações dos produtos
-a partir de uma lista de SKUs. Essa lista foi determinada a partir dos produtos extraídos
-pelo HTML. 
+Output: Um arquivo .csv com os dados extraídos, salvo em 'epoca_cosmeticos_oficial.csv'. 
 '''
 
 import requests
@@ -100,7 +83,7 @@ async def main():
         print("Extraindo informações",i,"de",len(responses))
         i+=1
 
-    final_df.to_csv('epoca_cosmeticos/epoca_cosmeticos_oficial.csv', index=False)
+    final_df.to_csv('epoca_cosmeticos_oficial.csv', index=False)
 
     final = time.time()
 

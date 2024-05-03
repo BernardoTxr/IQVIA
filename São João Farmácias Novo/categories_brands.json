@@ -1,0 +1,89 @@
+{
+    "ortopedia-e-fisioterapia": [
+        "pernas###23",
+        "protetores###22",
+        "bolsa-termica###12",
+        "torax###9",
+        "maos-e-pes###9",
+        "braco###7"
+    ],
+    "medicamentos": [
+        "medicamentos###1796",
+        "alergias-e-infeccoes###641",
+        "gripe-febre-e-resfriados###443",
+        "especialidades###390",
+        "gastrointestinal###364",
+        "vitaminas-e-minerais###162",
+        "cuidados-olhos-boca-e-ouvido###138",
+        "fitoterapicos###76",
+        "dor###26",
+        "dor-e-inflamacao###18",
+        "inflamacao###16",
+        "vermes###7",
+        "relaxante-muscular###5",
+        "calvicie###4",
+        "vacinas###3",
+        "tireoide###2",
+        "psoriase###1"
+    ],
+    "saude-e-bem-estar": [
+        "vitaminas-e-minerais###268",
+        "socorros-primeiros###261",
+        "suplementacao-alimentar###190",
+        "testes-e-aparelhos###61",
+        "micoses-e-calos###49",
+        "repelentes###40",
+        "cicatrizante###2"
+    ],
+    "criancas-e-bebes": [
+        "troca-de-fraldas###213",
+        "amamentacao###210",
+        "banho-infantil###159",
+        "roupas-e-acessorios-infantis###116",
+        "alimentacao-infantil###91",
+        "higiene-oral-infantil###48",
+        "cuidados-com-a-pele-infantil###23"
+    ],
+    "higiene-e-cuidados-pessoais": [
+        "cuidado-oral###371",
+        "produtos-intimos###305",
+        "desodorantes###293",
+        "cabelos###285",
+        "banho###244",
+        "higiene-masculina###103",
+        "higiene-pessoal###65",
+        "higiene-feminina###51",
+        "cuidados-com-o-rosto###28",
+        "depilacao###26",
+        "alcool-em-gel###20",
+        "lencos###16",
+        "higiene-oral###16"
+    ],
+    "beleza": [
+        "cabelos###641",
+        "maos-e-pes###631",
+        "maquiagem###447",
+        "cuidados-com-o-rosto###155",
+        "cuidados-com-o-corpo###142",
+        "protecao-solar###138",
+        "acessorios###126",
+        "perfumes-e-fragrancias###76",
+        "depilacao###65"
+    ],
+    "dermo": [
+        "cuidados-com-o-rosto###210",
+        "cuidados-com-o-corpo###118",
+        "protecao-solar###64",
+        "cabelos###22",
+        "nutricosmeticos###21",
+        "maos-e-pes###2"
+    ],
+    "conveniencia": [
+        "guloseimas###628",
+        "casa-e-utilidades###625",
+        "bebidas###177",
+        "pet###166",
+        "alimentos###115",
+        "material-escolar###111"
+    ]
+}
